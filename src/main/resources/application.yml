@@ -1,0 +1,29 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          # Rabbit MQ exchange
+          destination: queue.log.messages
+          # Rabbit MQ queue
+          group: portal
+#          binder: local_rabbit
+#        consumer:
+#          auto-bind-dlq: true
+#          republish-to-dlq: true
+#      binders:
+#        local_rabbit:
+#          type: rabbit
+#          environment:
+#            spring:
+#              rabbitmq:
+#                host: localhost
+#                port: 5672
+#                username: guest
+#                password: guest
+#                virtual-host: /
+spring.rabbitmq.addresses: localhost:5672
+#spring.rabbitmq.username: guest
+#spring.rabbitmq.password: guest
+
+logging.level.root: DEBUG
