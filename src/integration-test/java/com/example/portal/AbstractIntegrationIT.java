@@ -18,8 +18,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.File;
@@ -29,11 +27,11 @@ import java.time.temporal.ChronoUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(initializers = AbstractIntegrationTest.Initializer.class)
+@ContextConfiguration(initializers = AbstractIntegrationIT.Initializer.class)
 @SpringBootTest(properties = "spring.autoconfigure.exclude=org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration")
-public class AbstractIntegrationTest {
+public class AbstractIntegrationIT {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractIntegrationTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractIntegrationIT.class);
 
     private static final String RABBITMQ_NAME = "rabbitmq";
     private static final int RABBITMQ_PORT = 5672;

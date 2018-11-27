@@ -3,8 +3,8 @@ services:
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
-      - 5672
-      - 15672
+      - 5672:5672
+      - 15672:15672
 # Run this from CMD prompt:
 #   docker-machine ssh
 #   sudo sysctl -w vm.max_map_count=262144
@@ -15,7 +15,7 @@ services:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
-      - 9200
+      - 9200:9200
     ulimits:
       memlock:
         soft: -1
