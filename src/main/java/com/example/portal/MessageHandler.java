@@ -10,9 +10,15 @@ import org.springframework.cloud.stream.messaging.Sink;
 public class MessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
+    private ClientService clientService;
+
+    public MessageHandler(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @StreamListener(Sink.INPUT)
-    public void listenForClient(String client) {
+    public void listenForClient(Client client) {
         logger.info("Received {}", client);
+        clientService.save(client);
     }
 }

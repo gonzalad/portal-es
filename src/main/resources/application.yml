@@ -8,9 +8,9 @@ spring:
           # Rabbit MQ queue
           group: portal
 #          binder: local_rabbit
-#        consumer:
-#          auto-bind-dlq: true
-#          republish-to-dlq: true
+        consumer:
+          auto-bind-dlq: true
+          republish-to-dlq: true
 #      binders:
 #        local_rabbit:
 #          type: rabbit
@@ -25,5 +25,7 @@ spring:
 spring.rabbitmq.addresses: localhost:5672
 #spring.rabbitmq.username: guest
 #spring.rabbitmq.password: guest
+
+spring.data.elasticsearch.cluster-nodes: localhost:9300
 
 logging.level.root: DEBUG
