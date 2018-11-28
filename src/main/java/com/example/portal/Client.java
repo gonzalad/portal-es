@@ -1,10 +1,12 @@
 package com.example.portal;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
+@Document(indexName = "portal", type = "client")
 public class Client {
 
     @Id

@@ -42,7 +42,8 @@ public class AbstractIntegrationIT {
     private static final String ES_NAME = "elasticsearch";
     private static final int ES_PORT = 9200;
 
-    @ClassRule
+
+//    @ClassRule
     public static DockerComposeContainer environment =
             new DockerComposeContainer(new File("src/main/docker/docker-compose.yml"))
                     .withExposedService(RABBITMQ_NAME, RABBITMQ_PORT, Wait.forListeningPort().withStartupTimeout(Duration.of(240, ChronoUnit.SECONDS)))
@@ -53,25 +54,16 @@ public class AbstractIntegrationIT {
                     .withTailChildContainers(true);
                     //.withExposedService("elasticsearch_1", ELASTICSEARCH_PORT);
 
-
-    /*@ClassRule
-    public static GenericContainer rabbitMQ = new GenericContainer("rabbitmq:3-management")
-            .withExposedPorts(5672, 15672)
-            .waitingFor(Wait.forListeningPort())
-            .withStartupTimeout(Duration.of(240, ChronoUnit.SECONDS))
-            .withLogConsumer(new Slf4jLogConsumer(logger));
-*/
-
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
 
             TestPropertyValues values = TestPropertyValues.of(
-//                    "spring.cloud.stream.binders.local_rabbit.environment.spring.rabbitmq.host=" + rabbitMQ.getContainerIpAddress(),
-//                    "spring.cloud.stream.binders.local_rabbit.environment.spring.rabbitmq.port=" + rabbitMQ.getMappedPort(5672),
-                    "spring.rabbitmq.addresses=" + environment.getServiceHost(RABBITMQ_NAME, RABBITMQ_PORT) + ":" + environment.getServicePort(RABBITMQ_NAME, RABBITMQ_PORT),
-                    "spring.data.elasticsearch.cluster-nodes=" + environment.getServiceHost(ES_NAME, ES_PORT) + ":" + environment.getServicePort(ES_NAME, ES_PORT)
+                    "spring.rabbitmq.addresses=192.168.99.100:5672",
+                    "spring.data.elasticsearch.cluster-nodes=192.168.99.100:9300"
+//                    "spring.rabbitmq.addresses=" + environment.getServiceHost(RABBITMQ_NAME, RABBITMQ_PORT) + ":" + environment.getServicePort(RABBITMQ_NAME, RABBITMQ_PORT),
+//                    "spring.data.elasticsearch.cluster-nodes=" + environment.getServiceHost(ES_NAME, ES_PORT) + ":" + environment.getServicePort(ES_NAME, ES_PORT)
             );
             values.applyTo(configurableApplicationContext);
         }
@@ -99,6 +91,7 @@ public class AbstractIntegrationIT {
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         rabbitAdmin.purgeQueue(QUEUE_NAME);
         rabbitAdmin.purgeQueue(DEAD_LETTER_QUEUE_NAME);
+        // TODO: cleanup ES
     }
 
     @Test
@@ -108,6 +101,8 @@ public class AbstractIntegrationIT {
         client.setLastName("hello");
 
         rabbitTemplate.convertAndSend(client);
+
+        // TODO: wait a few, refresh ES and check client is in ES
     }
 
     @Test
@@ -117,10 +112,11 @@ public class AbstractIntegrationIT {
 
         rabbitTemplate.convertAndSend(client);
         logger.debug("Waiting for listener to receive and process message");
-        Thread.sleep(1000L);
+        Thread.sleep(2000L);
 
         Client clientInDeadLetterQueue = (Client) rabbitTemplate.receiveAndConvert(DEAD_LETTER_QUEUE_NAME);
         assertThat(clientInDeadLetterQueue).isEqualTo(client);
+        // TODO: refresh ES and check client is not in ES
     }
 
     private static final class ElasticsearchContainer {

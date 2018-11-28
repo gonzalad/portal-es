@@ -1,6 +1,12 @@
 spring:
   cloud:
     stream:
+      rabbit:
+        bindings:
+          input:
+            consumer:
+              auto-bind-dlq: true
+              republish-to-dlq: true
       bindings:
         input:
           # Rabbit MQ exchange
@@ -8,9 +14,6 @@ spring:
           # Rabbit MQ queue
           group: portal
 #          binder: local_rabbit
-        consumer:
-          auto-bind-dlq: true
-          republish-to-dlq: true
 #      binders:
 #        local_rabbit:
 #          type: rabbit
@@ -28,4 +31,4 @@ spring.rabbitmq.addresses: localhost:5672
 
 spring.data.elasticsearch.cluster-nodes: localhost:9300
 
-logging.level.root: DEBUG
+logging.level.root: INFO
