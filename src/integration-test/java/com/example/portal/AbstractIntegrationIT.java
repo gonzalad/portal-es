@@ -60,8 +60,8 @@ public class AbstractIntegrationIT {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
 
             TestPropertyValues values = TestPropertyValues.of(
-                    "spring.rabbitmq.addresses=192.168.99.100:5672",
-                    "spring.data.elasticsearch.cluster-nodes=192.168.99.100:9300"
+                    "spring.rabbitmq.addresses=192.168.99.101:5672",
+                    "spring.data.elasticsearch.cluster-nodes=192.168.99.101:9300"
 //                    "spring.rabbitmq.addresses=" + environment.getServiceHost(RABBITMQ_NAME, RABBITMQ_PORT) + ":" + environment.getServicePort(RABBITMQ_NAME, RABBITMQ_PORT),
 //                    "spring.data.elasticsearch.cluster-nodes=" + environment.getServiceHost(ES_NAME, ES_PORT) + ":" + environment.getServicePort(ES_NAME, ES_PORT)
             );
@@ -89,8 +89,8 @@ public class AbstractIntegrationIT {
         this.rabbitTemplate.setExchange(EXCHANGE_NAME);
         this.rabbitTemplate.setQueue(QUEUE_NAME);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-        rabbitAdmin.purgeQueue(QUEUE_NAME);
-        rabbitAdmin.purgeQueue(DEAD_LETTER_QUEUE_NAME);
+        rabbitAdmin.purgeQueue(QUEUE_NAME, false);
+        rabbitAdmin.purgeQueue(DEAD_LETTER_QUEUE_NAME, false);
         // TODO: cleanup ES
     }
 
@@ -112,7 +112,7 @@ public class AbstractIntegrationIT {
 
         rabbitTemplate.convertAndSend(client);
         logger.debug("Waiting for listener to receive and process message");
-        Thread.sleep(2000L);
+        Thread.sleep(10000L);
 
         Client clientInDeadLetterQueue = (Client) rabbitTemplate.receiveAndConvert(DEAD_LETTER_QUEUE_NAME);
         assertThat(clientInDeadLetterQueue).isEqualTo(client);
